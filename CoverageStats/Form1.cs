@@ -26,10 +26,12 @@ namespace CoverageStats
             browse.Multiselect = false;
             if (browse.ShowDialog() == DialogResult.OK)
             {
-                 
+                string extendedPropertiesExcelType = browse.FileName.EndsWith("xslm") ? "Excel 12.0 Macro" : "Excel 12.0 Xml";  //Excel 12.0 Macro => xlsm; Excel 12.0 Xml => xlsx 
                 OleDbConnection conn = new OleDbConnection();
-                conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + browse.FileName + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;ImportMixedTypes=Text;TypeGuessRows=0"""; //C:\Users\u0139221\Desktop\file.xlsx.
+                conn.ConnectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""{1};HDR=Yes;IMEX=1;ImportMixedTypes=Text;TypeGuessRows=0""",
+                    browse.FileName, extendedPropertiesExcelType); ; //C:\Users\u0139221\Desktop\file.xlsx.
                 conn.Open();
+
 
                 DataTable a = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 
@@ -141,11 +143,12 @@ namespace CoverageStats
             string coverageList = Splitter.splitEndLineToInClauseOracle(listRecords.ToString(), "ife.entityid", true);
             //string SQL = string.Format("select ORGID,ORG_DATA_PROVIDER from OA.ORGANIZATIONS o left join ife.entityids e on e.entityid = o.orgid " +
             // " where {0} ", coverageList);
-            string SQL = string.Format("select * from (select ife.entityid, ORG_DATA_PROVIDER, ad.USERname, ife.AUDITDATETIME " +
-            " from ife.audittrail ife left join OA.ORGANIZATIONS oa on ife.entityid = oa.orgid " +
+            string SQL = string.Format("select * from (select ife.entityid, ORG_DATA_PROVIDER, ad.USERname, ife.AUDITDATETIME from ife.audittrail ife left join OA.ORGANIZATIONS oa on ife.entityid = oa.orgid " +
             " left join admin.users ad on ife.analystuserid = ad.userid where attributeid = 499 and newvalue like '%ID_TYPE>38</ID_TYPE%' " +
-             " and  {0}  order by ife.AUDITDATETIME DESC)" +
-            "where rownum = 1;" , coverageList);
+             " and  {0}  order by ife.AUDITDATETIME DESC) where rownum >=1"
+            //+
+            //where rownum < 2;" 
+            , coverageList);
 
             txtResult.Text = SQL; //result.ToString();
         }
@@ -179,6 +182,7 @@ namespace CoverageStats
             excel.GenerateWorkbook(result);
             excel.SaveIn("C:\\Users\\u0139221\\Desktop\\ImportSQl.xlsx");
             excel.CleanAndClose();
+            MessageBox.Show("Wake up. It's time to work:)");
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
