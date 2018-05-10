@@ -26,10 +26,8 @@ namespace CoverageStats
             browse.Multiselect = false;
             if (browse.ShowDialog() == DialogResult.OK)
             {
-                string extendedPropertiesExcelType = browse.FileName.EndsWith("xslm") ? "Excel 12.0 Macro" : "Excel 12.0 Xml";  //Excel 12.0 Macro => xlsm; Excel 12.0 Xml => xlsx 
                 OleDbConnection conn = new OleDbConnection();
-                conn.ConnectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""{1};HDR=Yes;IMEX=1;ImportMixedTypes=Text;TypeGuessRows=0""",
-                    browse.FileName, extendedPropertiesExcelType); ; //C:\Users\u0139221\Desktop\file.xlsx.
+                conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + browse.FileName + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;ImportMixedTypes=Text;TypeGuessRows=0"""; //C:\Users\u0139221\Desktop\file.xlsx.
                 conn.Open();
 
 
@@ -96,9 +94,13 @@ namespace CoverageStats
             browse.Multiselect = false;
             if (browse.ShowDialog() == DialogResult.OK)
             {
+                string extendedPropertiesExcelType = browse.FileName.EndsWith("xlsm") ? "Excel 12.0 Macro" : "Excel 12.0 Xml";
                 OleDbConnection conn = new OleDbConnection();
-                conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + browse.FileName + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;ImportMixedTypes=Text;TypeGuessRows=0"""; //C:\Users\u0139221\Desktop\file.xlsx.
+                conn.ConnectionString = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""{1};HDR=Yes;IMEX=1;ImportMixedTypes=Text;TypeGuessRows=0""",
+                    browse.FileName, extendedPropertiesExcelType);
+
                 conn.Open();
+
 
                 DataTable a = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 
